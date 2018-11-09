@@ -1,0 +1,39 @@
+
+ require_once('conn_db.php');
+ $sql= "SELECT * FROM tblcoursereg WHERE ( regNo= '" .$_SESSION['regno']. "') && ( YearOfStudy= '" .$_SESSION['yearOfStudy']. "') && ( AcademicYear= '" .$_SESSION['academicYear']. "')&& ( semester= '" .$_SESSION['semester']. "')"; 
+		
+			
+		 $user = mysql_query($sql);
+    	  if($user)
+		   {
+			  
+      $pdf->SetLineWidth(.3);
+   $pdf->SetFont('','B');
+    // Header
+    $w = array(28, 100, 20, 50);
+	$header = array('COURSE CODE', 'COURSE TITLE', 'UNITS', 'SIGNATURE OF THE INVIGILATOR');
+	
+	//pages separator.
+	$pdf->Cell(11,31,'',0,2);
+	
+    for($i=0;$i<count($header);$i++)
+       $pdf->Cell($w[$i],7,$header[$i],1,0);
+   $pdf->Ln();
+    // Color and font restoration
+   $pdf->SetFillColor(224,235,255);
+   $pdf->SetTextColor(0);
+   $pdf->SetFont('','','B');
+    // Data
+    $fill = false;
+   while($row=mysql_fetch_array($user)){
+		 $pdf->Cell($w[0],5.5,$row['courseCode'],'LR',0,'L',$fill);
+       $pdf->Cell($w[1],5.5,$row['courseTitle'],'LR',0,'L',$fill);
+       $pdf->Cell($w[2],5.5,$row['units'],'LR',0,'LR',$fill);
+	    $pdf->Cell($w[3],5.5,'','LR',0,'R',$fill);
+       $pdf->Ln();
+        $fill = !$fill;
+	}
+    // Closing line
+   $pdf->Cell(array_sum($w),0,'','T');
+
+}
